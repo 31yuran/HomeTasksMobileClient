@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:home_task/fetch_data/task_servies.dart';
 import 'package:home_task/widgets/task_page.dart';
 import 'package:home_task/widgets/count_down_timer.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/scheduler.dart';
 import 'dart:convert';
-import 'package:signalr_client/signalr_client.dart';
-import 'package:logging/logging.dart';
+import 'package:eventhandler/eventhandler.dart';
 
 import 'package:home_task/fetch_data/task.dart';
 import 'package:home_task/widgets/drawer_main.dart';
+import 'package:home_task/globals.dart' as globals;
+import 'package:home_task/events.dart';
 
 class TasksPage extends StatefulWidget {
   final String title;
@@ -24,22 +23,20 @@ class _TasksPageState extends State<TasksPage> {
   List<Task> _list = List();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
 
-  void _addTaskHandle(List<Object> parameters){
-    for(var i = 0; i < parameters.length; i++){
-
-    }
+  void _onAddTaskEventHandler(AddTaskEvent event){
+    _fetchData();
+  }
+  void _onChangeTaskEventHandler(ChangeTaskEvent event){
+    _fetchData();
+  }
+  void _onRemoveTaskEventHandler(RemoveTaskEvent event){
+    _fetchData();
   }
 
-Future _fetchData() async {    
-    final response = await TaskServies.fetch();
+  Future _fetchData() async {    
+    final response = await globals.taskServies.fetch();
     if (response.statusCode == 200) {
       setState(() {_list = (json.decode(response.body) as List).map((data) => new Task.fromJson(data)).toList();});
-
-      final logger = Logger("SignalR - hub");
-      final hubConnection = HubConnectionBuilder().withUrl("http://192.168.56.1:3000/myHub").configureLogging(logger).build();
-      hubConnection.onclose( (error) => print("Connection Closed"));
-      await hubConnection.start();
-      hubConnection.on("addTaskHandle", _addTaskHandle);
     }
     else {return null;}
 }
@@ -48,7 +45,7 @@ Future _fetchData() async {
     final result = await Navigator.push( context, MaterialPageRoute(builder: (context) => TaskPage.init(task)));
     if(result != null){
       setState(() {_list.add(result as Task);});
-      await TaskServies.post(_list.last);
+      await globals.taskServies.post(_list.last);
     }
   }
 
@@ -56,12 +53,12 @@ Future _fetchData() async {
     final result = await Navigator.push( context, MaterialPageRoute(builder: (context) => TaskPage.init(task)));
     if(result != null){
       setState(() { task = result as Task;});
-      await TaskServies.put(task);
+      await globals.taskServies.put(task);
     }
   }
 
   void _deleteTask(Task task) async{
-    await TaskServies.del(task);
+    await globals.taskServies.del(task);
   }
 
   void deleteItem (index){ 
@@ -70,12 +67,16 @@ Future _fetchData() async {
   }
 
   void undoDeletion (index, item) async{    
-    await TaskServies.post(item);
+    await globals.taskServies.post(item);
     setState((){ _list.insert(index, item); }); 
   }
 
   @override
   void initState() {
+    EventHandler().subscribe(_onAddTaskEventHandler);
+    EventHandler().subscribe(_onChangeTaskEventHandler);
+    EventHandler().subscribe(_onRemoveTaskEventHandler);
+
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_){  _refreshIndicatorKey.currentState?.show(); });
   }

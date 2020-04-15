@@ -119,7 +119,8 @@ class CountDownTimer extends StatelessWidget {
         if (isStarted == false && running == true) {
           try {
             _timerProvider.setInitialDate = initialDate;
-          } on Exception {}
+          } 
+          on Exception {}
 
           isStarted = true;
         }
@@ -135,7 +136,10 @@ class CountDownTimer extends StatelessWidget {
               _timerProvider.setCurrentHour = time['hour'];
               _timerProvider.setCurrentMinute = time['minute'];
               _timerProvider.setCurrentSecond = time['second'];
-            } on Exception {}
+            } 
+            on Exception {
+
+            }
           });
         int tempHour = _timerProvider.getCurrentHour,
             tempMinute = _timerProvider.getCurrentMinute,
