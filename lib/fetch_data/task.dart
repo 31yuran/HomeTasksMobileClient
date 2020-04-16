@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:home_task/fetch_data/master.dart';
 import 'package:home_task/fetch_data/slave.dart';
+import 'package:home_task/enums.dart' as enums;
 
 class Task {
   int id;
@@ -11,7 +12,7 @@ class Task {
   DateTime timeToComplete;
   DateTime startOfExecution;
   DateTime endOfExecution;
-  TaskState state;
+  enums.TaskState state;
   double  cost;
 
   String get masterText => master?.name ?? "";
@@ -36,7 +37,7 @@ class Task {
       //slave: json['slave'],
       desc: json['desc'],
       endOfExecution : DateTime.tryParse(json['endOfExecution']),
-      state: TaskState.values[json['state']],
+      state: enums.TaskState.values[json['state']],
     );
   }
   Map<String, dynamic> toJsonForPost(){
@@ -58,22 +59,13 @@ class Task {
   }
   Color getColorByState(){
     switch (this.state){
-      case TaskState.created: return Colors.blue;
-      case TaskState.assigned: return Colors.green;
-      case TaskState.complete: return Colors.yellowAccent;
-      case TaskState.nonComplete: return Colors.red;
-      case TaskState.verified: return Colors.green;
-      case TaskState.nonVerified: return Colors.grey;
+      case enums.TaskState.created: return Colors.blue;
+      case enums.TaskState.assigned: return Colors.green;
+      case enums.TaskState.complete: return Colors.yellowAccent;
+      case enums.TaskState.nonComplete: return Colors.red;
+      case enums.TaskState.verified: return Colors.green;
+      case enums.TaskState.nonVerified: return Colors.grey;
     }
     return Colors.white;
   }
-}
-enum TaskState
-{
-    created,
-    assigned,
-    complete,
-    nonComplete,
-    verified, 
-    nonVerified
 }

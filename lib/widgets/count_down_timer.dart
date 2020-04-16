@@ -43,8 +43,8 @@ class TimerProvider with ChangeNotifier {
 
   ///takes duration in second and calculates hour minute second
   Map<String, int> findHMS(int totalSecond) {
-    if(totalSecond <= 0){
-      return {'hour': 0, 'minute': 0, 'second': 0};  
+    if (totalSecond <= 0) {
+      return {'hour': 0, 'minute': 0, 'second': 0};
     }
     int hour = (totalSecond / 3600).floor();
     int minute = ((totalSecond - hour * 3600) / 60).floor();
@@ -52,7 +52,6 @@ class TimerProvider with ChangeNotifier {
     return {'hour': hour, 'minute': minute, 'second': second};
   }
 }
-
 
 ///timer widget
 
@@ -86,20 +85,21 @@ class CountDownTimer extends StatelessWidget {
 
   ///- if set true then shows little shadow
   ///  below the timer widget
-  final bool isRaised ;
+  final bool isRaised;
 
   ///border radius of widget:
   /// -applies to all four corner border radius
   final double borderRadius;
   CountDownTimer(
       {this.backgroundColor,
-        @required this.height,
-        @required this.width,
-        this.running,
-        this.timerTextStyle,
-        this.borderRadius,
-        @required this.initialDate,
-        this.tracetime,this.isRaised=false});
+      @required this.height,
+      @required this.width,
+      this.running,
+      this.timerTextStyle,
+      this.borderRadius,
+      @required this.initialDate,
+      this.tracetime,
+      this.isRaised = false});
 
   ///for hour mminute second
   String hour = '00', minute = '00', second = '00';
@@ -119,8 +119,7 @@ class CountDownTimer extends StatelessWidget {
         if (isStarted == false && running == true) {
           try {
             _timerProvider.setInitialDate = initialDate;
-          } 
-          on Exception {}
+          } on Exception {}
 
           isStarted = true;
         }
@@ -130,16 +129,15 @@ class CountDownTimer extends StatelessWidget {
             ///60 => 1 minute 0 second
             ///3601 => 1 hour 0 minute 1 second
             Map<String, int> time = new Map();
-            time = _timerProvider.findHMS(_timerProvider.getInitialDate.difference(DateTime.now()).inSeconds);
+            time = _timerProvider.findHMS(_timerProvider.getInitialDate
+                .difference(DateTime.now())
+                .inSeconds);
             try {
               ///update provider with hour, minute and second
               _timerProvider.setCurrentHour = time['hour'];
               _timerProvider.setCurrentMinute = time['minute'];
               _timerProvider.setCurrentSecond = time['second'];
-            } 
-            on Exception {
-
-            }
+            } on Exception {}
           });
         int tempHour = _timerProvider.getCurrentHour,
             tempMinute = _timerProvider.getCurrentMinute,
@@ -159,13 +157,12 @@ class CountDownTimer extends StatelessWidget {
           decoration: BoxDecoration(
               boxShadow: isRaised
                   ? [
-                BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 0.5,
-                    spreadRadius: 0.3,
-                    offset: Offset(1, 1)),
-
-              ]
+                      BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 0.5,
+                          spreadRadius: 0.3,
+                          offset: Offset(1, 1)),
+                    ]
                   : [],
               color: backgroundColor != null ? backgroundColor : Colors.black,
               borderRadius: BorderRadius.circular(
@@ -175,9 +172,9 @@ class CountDownTimer extends StatelessWidget {
                   style: timerTextStyle != null
                       ? timerTextStyle
                       : new TextStyle(
-                      color: Colors.grey[200],
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18))),
+                          color: Colors.grey[200],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18))),
           height: height,
           width: width,
         );
