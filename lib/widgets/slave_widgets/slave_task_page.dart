@@ -61,7 +61,7 @@ class _SlaveTaskPageState extends State<SlaveTaskPage> {
     List<Widget> formWidget = new List();
 
     formWidget.add(_createTestField( _task.masterText,'enter master', _master));
-    formWidget.add(_createTestField( _task.slaveText,'enter slave', _slave));
+    //formWidget.add(_createTestField( _task.slaveText,'enter slave', _slave));
     formWidget.add(_createTestField( _task.desc,'enter desc', _desc));
     formWidget.add(_createDateTimeButton(_time, isDate: false));
     formWidget.add(new RaisedButton(
@@ -71,9 +71,9 @@ class _SlaveTaskPageState extends State<SlaveTaskPage> {
         onPressed: () {
           setState(() {
             if (_master?.value?.isNotEmpty ?? false)
-              _task.master.name = _master.value;
-            if (_slave?.value?.isNotEmpty ?? false)
-              _task.slave.name = _slave.value;
+              _task.user.name = _master.value;
+            /*if (_slave?.value?.isNotEmpty ?? false)
+              _task.slave.name = _slave.value;*/
             if (_desc?.value?.isNotEmpty ?? false) _task.desc = _desc.value;
             if (_time?.value?.isNotEmpty ?? false)
               _task.endOfExecution = _parseToDateTime(_time.value) ??

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:home_task/main.dart';
+import 'package:home_task/globals.dart' as globals;
+import 'package:home_task/enums.dart' as enums;
 
 class DrawerMain extends StatefulWidget {
   DrawerMain({Key key, this.selected}) : super(key: key);
@@ -30,10 +32,11 @@ class DrawerMainState extends State<DrawerMain> {
         ),
       ),
       ListTile(
-        selected: widget.selected == 'about',
-        leading: Icon(Icons.info),
-        title: Text('Про нас'),
+        selected: widget.selected == 'masterTasks',
+        leading: Icon(Icons.list),
+        title: Text('Назаначенные'),
         onTap: () {
+          globals.userRole = enums.UserRole.master;
           Navigator.pop(context);
           Navigator.push(
             context,
@@ -42,9 +45,22 @@ class DrawerMainState extends State<DrawerMain> {
         },
       ),
       ListTile(
-        selected: widget.selected == 'projects',
+        selected: widget.selected == 'slaveTasks',
         leading: Icon(Icons.list),
-        title: Text('Проекти'),
+        title: Text('Полученные'),
+        onTap: () {
+          globals.userRole = enums.UserRole.slave;
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyHomePage()),
+          );
+        },
+      ),
+      ListTile(
+        selected: widget.selected == 'info',
+        leading: Icon(Icons.info),
+        title: Text('Информация'),
         onTap: () {
           Navigator.pop(context);
         },

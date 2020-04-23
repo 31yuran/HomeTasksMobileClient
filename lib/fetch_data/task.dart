@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:home_task/fetch_data/master.dart';
-import 'package:home_task/fetch_data/slave.dart';
+import 'package:home_task/fetch_data/user.dart';
 import 'package:home_task/enums.dart' as enums;
 
 class Task {
   int id;
   String giud;
-  Master master;
-  Slave slave;
+  User user;  
   String desc;
   DateTime timeToComplete;
   DateTime startOfExecution;
@@ -15,26 +13,21 @@ class Task {
   enums.TaskState state;
   double  cost;
 
-  String get masterText => master?.name ?? "";
-  String get slaveText => slave?.name ?? "";
+  String get masterText => user?.name ?? "";
   String get descText => desc ?? "";
   DateTime get endOfExecutionProp => endOfExecution;
   set endOfExecutionProp(DateTime val) => endOfExecution = val.isBefore(DateTime.now()) ? DateTime.now().add(Duration(hours: 1)) : val;
 
 
-  Task.init({this.slave, this.desc}){
-    this.master = new Master.init();
-    this.slave = new Slave.init();
+  Task.init({this.user, this.desc}){
+    this.user = new User.init();
   }
-  Task._({this.id, this.master, this.slave, this.desc, this.endOfExecution, this.state});
+  Task._({this.id, this.user, this.desc, this.endOfExecution, this.state});
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return new Task._(
       id: json['id'],
-      master: new Master.fromJson(json['master']),
-      slave: new Slave.fromJson(json['slave']),
-      //master: json['master'],
-      //slave: json['slave'],
+      user: new User.fromJson(json['user']),
       desc: json['desc'],
       endOfExecution : DateTime.tryParse(json['endOfExecution']),
       state: enums.TaskState.values[json['state']],
@@ -42,8 +35,7 @@ class Task {
   }
   Map<String, dynamic> toJsonForPost(){
     return {
-      'master': this.master.toJsonForPost(),
-      'slave': this.slave.toJsonForPost(),
+      'user': this.user.toJsonForPost(),
       'desc':this.desc,
       'endOfExecution':this.endOfExecution.toIso8601String(),
     };
@@ -51,8 +43,7 @@ class Task {
   Map<String, dynamic> toJsonForPut(){
     return {
       'id': this.id,
-      'master': this.master.toJsonForPut(),
-      'slave': this.slave.toJsonForPut(),
+      'user': this.user.toJsonForPut(),
       'desc':this.desc,
       'endOfExecution':this.endOfExecution.toIso8601String(),
     };

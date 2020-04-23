@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:eventhandler/eventhandler.dart';
 
 import 'package:home_task/fetch_data/task.dart';
+import 'package:home_task/fetch_data/user.dart';
 import 'package:home_task/widgets/drawer_main.dart';
 import 'package:home_task/globals.dart' as globals;
 import 'package:home_task/enums.dart' as enums;
@@ -41,9 +42,15 @@ class _MasterTaskListPageState extends State<MasterTaskListPage> {
     final response = await globals.taskServies.fetch();
     if (response.statusCode == 200) {
       setState(() {
-        _list = (json.decode(response.body) as List)
+        List<User> userList = (json.decode(response.body) as List)
+            .map((data) => new User.fromJson(data)).toList();
+            if(userList.length > 0){
+              _list =  userList.first.tasks;   
+            }
+
+        /*_list = (json.decode(response.body) as List)
             .map((data) => new Task.fromJson(data))
-            .toList();
+            .toList();*/
       });
     } else {
       return null;

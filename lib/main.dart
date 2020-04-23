@@ -29,9 +29,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    globals.userRole = enums.UserRole.master;
     return Scaffold(
       body: Center(
         child: globals.userRole == enums.UserRole.master
