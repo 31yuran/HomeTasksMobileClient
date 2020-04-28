@@ -38,23 +38,17 @@ class _MasterTaskListPageState extends State<MasterTaskListPage> {
     _fetchData();
   }
 
-  Future _fetchData() async {
-    final response = await globals.taskServies.fetch();
-    if (response.statusCode == 200) {
+  Future<void> _fetchData() async {
+    /*final resp = await globals.taskServies.getCurrentUser();
+    if(resp.statusCode == 200){
       setState(() {
-        List<User> userList = (json.decode(response.body) as List)
-            .map((data) => new User.fromJson(data)).toList();
-            if(userList.length > 0){
-              _list =  userList.first.tasks;   
-            }
-
-        /*_list = (json.decode(response.body) as List)
-            .map((data) => new Task.fromJson(data))
-            .toList();*/
+        _list = globals.currentUser?.tasks;
       });
-    } else {
-      return null;
-    }
+    }*/
+
+    setState(() {
+      _list = globals.currentUser?.tasks;
+    });
   }
 
   void _addTask([Task task]) async {

@@ -36,7 +36,7 @@ class DrawerMainState extends State<DrawerMain> {
         leading: Icon(Icons.list),
         title: Text('Назаначенные'),
         onTap: () {
-          globals.userRole = enums.UserRole.master;
+          globals.currentUser.role = enums.UserRole.master;
           Navigator.pop(context);
           Navigator.push(
             context,
@@ -49,7 +49,7 @@ class DrawerMainState extends State<DrawerMain> {
         leading: Icon(Icons.list),
         title: Text('Полученные'),
         onTap: () {
-          globals.userRole = enums.UserRole.slave;
+          globals.currentUser.role = enums.UserRole.slave;
           Navigator.pop(context);
           Navigator.push(
             context,

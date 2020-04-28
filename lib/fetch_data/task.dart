@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:home_task/fetch_data/user.dart';
 import 'package:home_task/enums.dart' as enums;
+import 'package:home_task/globals.dart' as globals;
 
 class Task {
   int id;
   String giud;
-  User user;  
+  int userId;  
   String desc;
   DateTime timeToComplete;
   DateTime startOfExecution;
@@ -13,21 +14,20 @@ class Task {
   enums.TaskState state;
   double  cost;
 
-  String get masterText => user?.name ?? "";
+  String get masterText => globals.currentUser?.name ?? "";
   String get descText => desc ?? "";
   DateTime get endOfExecutionProp => endOfExecution;
   set endOfExecutionProp(DateTime val) => endOfExecution = val.isBefore(DateTime.now()) ? DateTime.now().add(Duration(hours: 1)) : val;
 
 
-  Task.init({this.user, this.desc}){
-    this.user = new User.init();
+  Task.init({this.userId, this.desc}){
   }
-  Task._({this.id, this.user, this.desc, this.endOfExecution, this.state});
+  Task._({this.id, this.userId, this.desc, this.endOfExecution, this.state});
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return new Task._(
       id: json['id'],
-      user: new User.fromJson(json['user']),
+      userId: json['userId'],
       desc: json['desc'],
       endOfExecution : DateTime.tryParse(json['endOfExecution']),
       state: enums.TaskState.values[json['state']],
@@ -35,7 +35,7 @@ class Task {
   }
   Map<String, dynamic> toJsonForPost(){
     return {
-      'user': this.user.toJsonForPost(),
+      'userId': this.userId,
       'desc':this.desc,
       'endOfExecution':this.endOfExecution.toIso8601String(),
     };
@@ -43,7 +43,7 @@ class Task {
   Map<String, dynamic> toJsonForPut(){
     return {
       'id': this.id,
-      'user': this.user.toJsonForPut(),
+      'userId': this.userId,
       'desc':this.desc,
       'endOfExecution':this.endOfExecution.toIso8601String(),
     };
