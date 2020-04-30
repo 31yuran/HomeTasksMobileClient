@@ -8,5 +8,7 @@ User _currentUser;
 User get currentUser => _currentUser;
 set currentUser(User val) {
   _currentUser = val;
-  taskServies.savePref("userId", _currentUser.id.toString());
-  }
+  if (_currentUser.role == null) _currentUser.role = enums.UserRole.master;
+  if (_currentUser != null)
+    taskServies.savePref("userId", _currentUser.id.toString());
+}

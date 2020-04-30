@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:home_task/fetch_data/user.dart';
 import 'package:home_task/enums.dart' as enums;
 import 'package:home_task/globals.dart' as globals;
+import 'package:home_task/ui.dart' as ui;
 
 class Task {
   int id;
@@ -25,11 +26,13 @@ class Task {
   Task._({this.id, this.userId, this.desc, this.endOfExecution, this.state});
 
   factory Task.fromJson(Map<String, dynamic> json) {
+    var endOfExecutionTime = ui.parseToDateTimeFromApi(json['endOfExecution']);
     return new Task._(
       id: json['id'],
       userId: json['userId'],
       desc: json['desc'],
-      endOfExecution : DateTime.tryParse(json['endOfExecution']),
+      //endOfExecution : DateTime.tryParse(json['endOfExecution']),
+      endOfExecution : endOfExecutionTime,
       state: enums.TaskState.values[json['state']],
     );
   }

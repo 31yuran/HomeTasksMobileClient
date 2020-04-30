@@ -39,13 +39,6 @@ class _MasterTaskListPageState extends State<MasterTaskListPage> {
   }
 
   Future<void> _fetchData() async {
-    /*final resp = await globals.taskServies.getCurrentUser();
-    if(resp.statusCode == 200){
-      setState(() {
-        _list = globals.currentUser?.tasks;
-      });
-    }*/
-
     setState(() {
       _list = globals.currentUser?.tasks;
     });

@@ -39,16 +39,9 @@ class _SlaveTaskListPageState extends State<SlaveTaskListPage> {
   }
 
   Future _fetchData() async {
-    final response = await globals.taskServies.fetch();
-    if (response.statusCode == 200) {
-      setState(() {
-        _list = (json.decode(response.body) as List)
-            .map((data) => new Task.fromJson(data))
-            .toList();
-      });
-    } else {
-      return null;
-    }
+    setState(() {
+      _list = globals.currentUser?.tasks;
+    });
   }
 
   void _editTask(Task task) async {

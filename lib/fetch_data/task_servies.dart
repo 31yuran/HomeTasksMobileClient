@@ -63,13 +63,44 @@ class TaskServies {
     return response;
   }
 
+  Future<http.Response> registerUser(
+      String userName, String password, String slavePassword) async {
+    Map body = {
+      "name": userName,
+      "password": password,
+      "slavePassword": slavePassword
+    };
+    String jsonStr = jsonEncode(body);
+    final response =
+        await http.post(_urlApi + "/user", headers: _headers, body: jsonStr);
+    //final response = await http.post(_urlApi + "/user" + "/$userName" + "/$password" +"/$slavePassword", headers: _headers);
+    if (response.statusCode == 200) {
+      globals.currentUser = new User.fromJson(json.decode(response.body));
+      if (_hubConnection == null ||
+          _hubConnection.state == HubConnectionState.Disconnected)
+        _createHubConnection();
+    }
+    return response;
+  }
+
+  Future<http.Response> loginUser(String userName, String password) async {
+    final response = await http.get(_urlApi + "/$userName" + "/$password");
+    if (response.statusCode == 200) {
+      globals.currentUser = new User.fromJson(json.decode(response.body));
+      if (_hubConnection == null ||
+          _hubConnection.state == HubConnectionState.Disconnected)
+        _createHubConnection();
+    }
+    return response;
+  }
+
   Future<http.Response> getCurrentUser() async {
     int userId = -1;
     if (globals.currentUser != null) {
       return new Future<http.Response>(() => new http.Response("", 200));
     } else {
-      /*final idStr = await loadPref("userId");
-      userId = idStr != null ? int.tryParse(idStr) ?? -1 : -1;*/
+      final idStr = await loadPref("userId");
+      userId = idStr != null ? int.tryParse(idStr) ?? -1 : -1;
     }
     if (userId == -1)
       return new Future<http.Response>(() => new http.Response("", 204));

@@ -103,3 +103,28 @@ DateTime parseToDateTime(String str) {
   return new DateTime(int.parse(year), int.parse(month), int.parse(day),
       int.parse(hours), int.parse(minutes));
 }
+
+DateTime parseToDateTimeFromApi(String str) {
+  String year, month, day, hours, minutes;
+  var parts = str.split('-').where((x) => x.isNotEmpty).toList();
+  if (parts.length == 3) {
+    year = parts[0];
+    month = parts[1];
+    var dayTimeParts = parts[2].split('T').where((x) => x.isNotEmpty).toList();
+    if (dayTimeParts.length == 2) {
+      day = dayTimeParts[0];
+      var timeParts = dayTimeParts[1].split(':');
+      if (timeParts.length >= 2) {
+        hours = timeParts[0];
+        minutes = timeParts[1];
+      }
+    }
+  }
+  if (year == null ||
+      month == null ||
+      day == null ||
+      hours == null ||
+      minutes == null) return null;
+  return new DateTime(int.parse(year), int.parse(month), int.parse(day),
+      int.parse(hours), int.parse(minutes));
+}

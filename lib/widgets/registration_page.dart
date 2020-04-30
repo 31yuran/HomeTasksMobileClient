@@ -4,25 +4,25 @@ import 'package:home_task/fetch_data/user.dart';
 import 'package:home_task/ui.dart' as ui;
 import 'package:home_task/main.dart';
 import 'package:home_task/globals.dart' as globals;
-import 'package:home_task/widgets/registration_page.dart';
 
-class LoginPage extends StatefulWidget {
+class RegistrationPage extends StatefulWidget {
   User _user;
 
-  LoginPage({Key key}) : super(key: key);
-  LoginPage.init(this._user);
+  RegistrationPage({Key key}) : super(key: key);
+  RegistrationPage.init(this._user);
   @override
-  _LoginPageState createState() => _LoginPageState.init(_user);
+  _RegistrationPageState createState() => _RegistrationPageState.init(_user);
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegistrationPageState extends State<RegistrationPage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
   User _user;
   ui.TextFieldValue _userName;
   ui.TextFieldValue _password;
+  ui.TextFieldValue _slavePassword;
 
-  _LoginPageState.init(this._user);
+  _RegistrationPageState.init(this._user);
   @override
   void initState() {
     super.initState();
@@ -31,13 +31,14 @@ class _LoginPageState extends State<LoginPage> {
     });
     _userName = new ui.TextFieldValue();
     _password = new ui.TextFieldValue();
+    _slavePassword = new ui.TextFieldValue();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Войти'),
+          title: Text('Регистрация'),
         ),
         body: Form(
             key: _refreshIndicatorKey,
@@ -55,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
         'userName',
         'userName',
         _userName));
+
     widgets.add(ui.createTextField(
         (value) => setState(() {
               _password.value = value;
@@ -62,53 +64,45 @@ class _LoginPageState extends State<LoginPage> {
         'password',
         'password',
         _password));
+
+    widgets.add(ui.createTextField(
+        (value) => setState(() {
+              _slavePassword.value = value;
+            }),
+        'slavePassword',
+        'slavePassword',
+        _slavePassword));
+
     widgets.add(new RaisedButton(
         color: Colors.blue,
         textColor: Colors.white,
-        child: new Text('Войти'),
+        child: new Text('Зарегистрироватся'),
         onPressed: () {
-          login();
+          willWegister();
         }));
     return widgets;
   }
 
-  void login() async {
-    final response =
-        await globals.taskServies.loginUser(_userName.value, _password.value);
+  void willWegister() async {
+    final response = await globals.taskServies
+        .registerUser(_userName.value, _password.value, _slavePassword.value);
     if (response.statusCode == 200)
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MyHomePage()));
-    else if(response.statusCode == 204)
-      showAlertDialog(context,response.body);
+    else if (response.statusCode == 409) showAlertDialog(context);
   }
 
-  showAlertDialog(BuildContext context, String message) {
-    Widget cancelButton = FlatButton(
-      child: Text("Повторить"),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-    );
-    Widget continueButton = FlatButton(
-      child: Text("Регистрация"),
-      onPressed: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => RegistrationPage()));
-      },
+  showAlertDialog(BuildContext context) {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {},
     );
     AlertDialog alert = AlertDialog(
-      title: Text("User not found"),
-      content: Text(message +". " "Would you like to repeat or registration ?"),
+      title: Text("User with $_userName alredy exsist!"),
+      content: Text("Change user name."),
       actions: [
-        cancelButton,
-        continueButton,
+        okButton,
       ],
     );
-    showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
   }
 }

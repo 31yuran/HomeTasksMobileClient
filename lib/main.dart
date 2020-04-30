@@ -36,7 +36,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    //globals.taskServies.getCurrentUser();
   }
 
   @override
@@ -54,13 +53,11 @@ class _MyHomePageState extends State<MyHomePage> {
               case 200:
                 return Scaffold(
                   body: Center(
-                    child: globals.currentUser == null
-                        ? LoginPage.init(null)
-                        : globals.currentUser.role == enums.UserRole.master
-                            ? MasterTaskListPage(
-                                key: ValueKey("main"), title: "main")
-                            : SlaveTaskListPage(
-                                key: ValueKey("main"), title: "main"),
+                    child: globals.currentUser.role == enums.UserRole.master
+                        ? MasterTaskListPage(
+                            key: ValueKey("main"), title: "main")
+                        : SlaveTaskListPage(
+                            key: ValueKey("main"), title: "main"),
                   ),
                 );
               case 204:

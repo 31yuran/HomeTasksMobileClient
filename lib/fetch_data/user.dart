@@ -17,10 +17,12 @@ class User {
       id: jsonData['id'],
       name: jsonData['name'],
       password: jsonData['password'],
-      role: enums.UserRole.values[jsonData['role']],
-      tasks:
-          List<Task>.from(jsonData['tasks'].map((t) => new Task.fromJson(t))));
-          
+      //role: enums.UserRole.values[jsonData['role']],
+      tasks: jsonData['tasks'] == null
+          ? new List<Task>()
+          : List<Task>.from(
+              jsonData['tasks'].map((t) => new Task.fromJson(t))));
+
   Map<String, dynamic> toJsonForPost() {
     return {'name': this.name};
   }
