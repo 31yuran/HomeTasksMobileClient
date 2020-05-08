@@ -39,19 +39,23 @@ class _MasterTaskListPageState extends State<MasterTaskListPage> {
   }
 
   Future<void> _fetchData() async {
-    setState(() {
+    final response = await globals.taskServies.getTasks();
+    if (response.statusCode == 200) {
       _list = globals.currentUser?.tasks;
-    });
+      setState(() {
+        _list = globals.currentUser?.tasks;
+      });
+    }
   }
 
   void _addTask([Task task]) async {
     final result = await Navigator.push(context,
         MaterialPageRoute(builder: (context) => MasterTaskPage.init(task)));
     if (result != null) {
-      setState(() {
-        _list.add(result as Task);
-      });
-      await globals.taskServies.post(_list.last);
+      var response = await globals.taskServies.post(result as Task);
+      if (response.statusCode == 200) {
+        //_fetchData();
+      }
     }
   }
 
@@ -199,7 +203,7 @@ class _MasterTaskListPageState extends State<MasterTaskListPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addTask,
-        tooltip: 'Increment',
+        tooltip: 'Add task',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );

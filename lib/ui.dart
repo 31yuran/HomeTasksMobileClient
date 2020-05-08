@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:home_task/fetch_data/related_user.dart';
 
 class TextFieldValue {
   String value = "Not set";
@@ -127,4 +128,14 @@ DateTime parseToDateTimeFromApi(String str) {
       minutes == null) return null;
   return new DateTime(int.parse(year), int.parse(month), int.parse(day),
       int.parse(hours), int.parse(minutes));
+}
+
+List<DropdownMenuItem<String>> createSlavesDropDownItems(
+    List<RelatedUser> slaves) {
+  var ddItems = new List<DropdownMenuItem<String>>();
+  for (var i = 0; i < slaves.length; i++) {
+    ddItems.add(new DropdownMenuItem(
+        child: Text(slaves[i].name), value: slaves[i].name));
+  }
+  return ddItems;
 }

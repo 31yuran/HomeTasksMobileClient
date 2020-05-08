@@ -5,6 +5,8 @@ import 'package:home_task/fetch_data/task.dart';
 import 'package:home_task/enums.dart' as enums;
 import 'package:home_task/globals.dart' as globals;
 import 'package:home_task/ui.dart' as ui;
+import 'package:home_task/fetch_data/related_user.dart';
+import 'package:home_task/widgets/slave_widgets/add_slave_page.dart';
 
 class MasterTaskPage extends StatefulWidget {
   Task _task;
@@ -19,10 +21,10 @@ class MasterTaskPage extends StatefulWidget {
 }
 
 class _MasterTaskPageState extends State<MasterTaskPage> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      new GlobalKey<RefreshIndicatorState>();
+  /*final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();*/
   Task _task;
-
+  String _ddValue;
   ui.TextFieldValue _master;
   ui.TextFieldValue _slave;
   ui.TextFieldValue _desc;
@@ -40,9 +42,9 @@ class _MasterTaskPageState extends State<MasterTaskPage> {
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
+    /*SchedulerBinding.instance.addPostFrameCallback((_) {
       _refreshIndicatorKey.currentState?.show();
-    });
+    });*/
   }
 
   @override
@@ -52,7 +54,7 @@ class _MasterTaskPageState extends State<MasterTaskPage> {
           title: Text('Задача'),
         ),
         body: Form(
-            key: _refreshIndicatorKey,
+            key: UniqueKey(),
             child: new ListView(
               children: getFormWidget(),
             )));
@@ -68,7 +70,16 @@ class _MasterTaskPageState extends State<MasterTaskPage> {
         _task.masterText,
         'enter master',
         _master));
-    //formWidget.add(_createTestField( _task.slaveText,'enter slave', _slave));
+    var ddItems = ui.createSlavesDropDownItems(
+        globals.currentUser?.slaves ?? new List<RelatedUser>());
+    formWidget.add(DropdownButton<String>(
+        hint: Text("Slaves"),
+        items: ddItems,
+        onChanged: (String value) {
+          _slave.value = value;
+          _ddValue = value;
+        },
+        value: _ddValue));
     formWidget.add(ui.createTextField(
         (value) => setState(() {
               _desc.value = value;
@@ -77,7 +88,6 @@ class _MasterTaskPageState extends State<MasterTaskPage> {
         'enter desc',
         _desc));
 
-    //formWidget.add(_createDateTimeButton(_time, isDate: false));
     formWidget.add(ui.createDateTimeButton(
         () => setState(() {}), context, _time,
         isDate: false));
@@ -89,8 +99,11 @@ class _MasterTaskPageState extends State<MasterTaskPage> {
           setState(() {
             if (_master?.value?.isNotEmpty ?? false)
               _task.userId = globals.currentUser.id;
-            /*if (_slave?.value?.isNotEmpty ?? false)
-              _task.slave.name = _slave.value;*/
+            if (_slave?.value?.isNotEmpty ?? false) {
+              var currentSlave = globals.currentUser.slaves
+                  .firstWhere((s) => s.name == _slave.value);
+              _task.userId = currentSlave.id;
+            }
             if (_desc?.value?.isNotEmpty ?? false) _task.desc = _desc.value;
             if (_time?.value?.isNotEmpty ?? false)
               _task.endOfExecution = ui.parseToDateTime(_time.value) ??

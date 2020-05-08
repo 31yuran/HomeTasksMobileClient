@@ -1,4 +1,5 @@
 import 'package:eventhandler/eventhandler.dart';
+import 'package:home_task/fetch_data/related_user.dart';
 import 'package:home_task/fetch_data/task.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -94,6 +95,21 @@ class TaskServies {
     return response;
   }
 
+  Future<http.Response> addSlave(
+      String slaveName, String sharedPassword) async {
+    String jsonStr = jsonEncode({
+      'name': slaveName,
+      'sharedPassword': sharedPassword,
+      'ownUserId': globals.currentUser.id
+    });
+    final response =
+        await http.put(_urlApi + "/slaves", headers: _headers, body: jsonStr);
+    if (response.statusCode == 200) {
+      globals.currentUser = new User.fromJson(json.decode(response.body));
+    }
+    return response;
+  }
+
   Future<http.Response> getCurrentUser() async {
     int userId = -1;
     if (globals.currentUser != null) {
@@ -105,7 +121,7 @@ class TaskServies {
     if (userId == -1)
       return new Future<http.Response>(() => new http.Response("", 204));
 
-    final response = await http.get(_urlApi + "/$userId");
+    final response = await http.get(_urlApi + "/user" + "/$userId");
     if (response.statusCode == 200) {
       globals.currentUser = new User.fromJson(json.decode(response.body));
       if (_hubConnection == null ||
@@ -113,6 +129,19 @@ class TaskServies {
         _createHubConnection();
     } else {
       globals.currentUser = null;
+    }
+    return response;
+  }
+
+  Future<http.Response> getTasks() async {
+    if (globals.currentUser == null) {
+      return new Future<http.Response>(() => new http.Response("", 204));
+    }
+    final response =
+        await http.get(_urlApi + "/tasks" + "/${globals.currentUser.id}");
+    if (response.statusCode == 200) {
+      globals.currentUser.tasks = List<Task>.from(
+          json.decode(response.body).map((s) => new Task.fromJson(s)));
     }
     return response;
   }

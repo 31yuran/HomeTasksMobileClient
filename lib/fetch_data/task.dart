@@ -7,23 +7,29 @@ import 'package:home_task/ui.dart' as ui;
 class Task {
   int id;
   String giud;
-  int userId;  
+  int userId;
   String desc;
   DateTime timeToComplete;
   DateTime startOfExecution;
   DateTime endOfExecution;
   enums.TaskState state;
-  double  cost;
+  double cost;
 
   String get masterText => globals.currentUser?.name ?? "";
   String get descText => desc ?? "";
   DateTime get endOfExecutionProp => endOfExecution;
-  set endOfExecutionProp(DateTime val) => endOfExecution = val.isBefore(DateTime.now()) ? DateTime.now().add(Duration(hours: 1)) : val;
+  set endOfExecutionProp(DateTime val) =>
+      endOfExecution = val.isBefore(DateTime.now())
+          ? DateTime.now().add(Duration(hours: 1))
+          : val;
 
-
-  Task.init({this.userId, this.desc}){
-  }
-  Task._({this.id, this.userId, this.desc, this.endOfExecution, this.state});
+  Task.init({this.userId, this.desc}) {}
+  Task._(
+      {this.id,
+      this.userId,
+      this.desc,
+      this.endOfExecution,
+      this.state});
 
   factory Task.fromJson(Map<String, dynamic> json) {
     var endOfExecutionTime = ui.parseToDateTimeFromApi(json['endOfExecution']);
@@ -32,33 +38,41 @@ class Task {
       userId: json['userId'],
       desc: json['desc'],
       //endOfExecution : DateTime.tryParse(json['endOfExecution']),
-      endOfExecution : endOfExecutionTime,
+      endOfExecution: endOfExecutionTime,
       state: enums.TaskState.values[json['state']],
     );
   }
-  Map<String, dynamic> toJsonForPost(){
+  Map<String, dynamic> toJsonForPost() {
     return {
       'userId': this.userId,
-      'desc':this.desc,
-      'endOfExecution':this.endOfExecution.toIso8601String(),
+      'desc': this.desc,
+      'endOfExecution': this.endOfExecution.toIso8601String(),
     };
   }
-  Map<String, dynamic> toJsonForPut(){
+
+  Map<String, dynamic> toJsonForPut() {
     return {
       'id': this.id,
       'userId': this.userId,
-      'desc':this.desc,
-      'endOfExecution':this.endOfExecution.toIso8601String(),
+      'desc': this.desc,
+      'endOfExecution': this.endOfExecution.toIso8601String(),
     };
   }
-  Color getColorByState(){
-    switch (this.state){
-      case enums.TaskState.created: return Colors.blue;
-      case enums.TaskState.assigned: return Colors.green;
-      case enums.TaskState.complete: return Colors.yellowAccent;
-      case enums.TaskState.nonComplete: return Colors.red;
-      case enums.TaskState.verified: return Colors.green;
-      case enums.TaskState.nonVerified: return Colors.grey;
+
+  Color getColorByState() {
+    switch (this.state) {
+      case enums.TaskState.created:
+        return Colors.blue;
+      case enums.TaskState.assigned:
+        return Colors.green;
+      case enums.TaskState.complete:
+        return Colors.yellowAccent;
+      case enums.TaskState.nonComplete:
+        return Colors.red;
+      case enums.TaskState.verified:
+        return Colors.green;
+      case enums.TaskState.nonVerified:
+        return Colors.grey;
     }
     return Colors.white;
   }

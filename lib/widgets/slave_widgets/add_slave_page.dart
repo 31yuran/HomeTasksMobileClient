@@ -4,25 +4,26 @@ import 'package:home_task/fetch_data/user.dart';
 import 'package:home_task/ui.dart' as ui;
 import 'package:home_task/main.dart';
 import 'package:home_task/globals.dart' as globals;
+import 'package:home_task/widgets/registration_page.dart';
+import 'package:home_task/widgets/user_info_page.dart';
 
-class RegistrationPage extends StatefulWidget {
+class AddSlavePage extends StatefulWidget {
   User _user;
 
-  RegistrationPage({Key key}) : super(key: key);
-  RegistrationPage.init(this._user);
+  AddSlavePage({Key key}) : super(key: key);
+  AddSlavePage.init(this._user);
   @override
-  _RegistrationPageState createState() => _RegistrationPageState.init(_user);
+  _AddSlavePageState createState() => _AddSlavePageState.init(_user);
 }
 
-class _RegistrationPageState extends State<RegistrationPage> {
+class _AddSlavePageState extends State<AddSlavePage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
   User _user;
   ui.TextFieldValue _userName;
-  ui.TextFieldValue _password;
-  ui.TextFieldValue _slavePassword;
+  ui.TextFieldValue _sharedPassword;
 
-  _RegistrationPageState.init(this._user);
+  _AddSlavePageState.init(this._user);
   @override
   void initState() {
     super.initState();
@@ -30,15 +31,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
       _refreshIndicatorKey.currentState?.show();
     });
     _userName = new ui.TextFieldValue();
-    _password = new ui.TextFieldValue();
-    _slavePassword = new ui.TextFieldValue();
+    _sharedPassword = new ui.TextFieldValue();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Регистрация'),
+          title: Text('Add slave'),
         ),
         body: Form(
             key: _refreshIndicatorKey,
@@ -53,56 +53,54 @@ class _RegistrationPageState extends State<RegistrationPage> {
         (value) => setState(() {
               _userName.value = value;
             }),
-        'userName',
-        'userName',
+        'slaveName',
+        'slaveName',
         _userName));
-
     widgets.add(ui.createTextField(
         (value) => setState(() {
-              _password.value = value;
+              _sharedPassword.value = value;
             }),
-        'password',
-        'password',
-        _password));
-
-    widgets.add(ui.createTextField(
-        (value) => setState(() {
-              _slavePassword.value = value;
-            }),
-        'slavePassword',
-        'slavePassword',
-        _slavePassword));
-
+        'sharedPassword',
+        'sharedPassword',
+        _sharedPassword));
     widgets.add(new RaisedButton(
         color: Colors.blue,
         textColor: Colors.white,
-        child: new Text('Зарегистрироватся'),
+        child: new Text('Add'),
         onPressed: () {
-          willRegister();
+          addSlave();
         }));
     return widgets;
   }
 
-  void willRegister() async {
+  void addSlave() async {
     final response = await globals.taskServies
-        .registerUser(_userName.value, _password.value, _slavePassword.value);
+        .addSlave(_userName.value, _sharedPassword.value);
     if (response.statusCode == 200)
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MyHomePage()));
-    else if (response.statusCode == 409) showAlertDialog(context);
+      Navigator.pop(context);
+    else if (response.statusCode == 204)
+      showAlertDialog(context, "Slave not exist");
   }
 
-  showAlertDialog(BuildContext context) {
-    Widget okButton = FlatButton(
+  showAlertDialog(BuildContext context, String message) {
+    Widget cancelButton = FlatButton(
       child: Text("OK"),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.pop(context);
+      },
     );
     AlertDialog alert = AlertDialog(
-      title: Text("User with $_userName alredy exsist!"),
-      content: Text("Change user name."),
+      title: Text("Slave not found"),
+      content: Text(message),
       actions: [
-        okButton,
+        cancelButton,
       ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }
